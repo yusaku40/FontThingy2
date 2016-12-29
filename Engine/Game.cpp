@@ -40,6 +40,7 @@ void Game::UpdateModel()
 {
 	//this is a test
 	// this is a test 2
+	if (true);
 }
 
 void Game::ComposeFrame()
