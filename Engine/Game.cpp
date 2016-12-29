@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Utilies.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -38,11 +39,18 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	//this is a test
-	// this is a test 2
-	if (true);
+	
 }
 
 void Game::ComposeFrame()
 {
+	Vec2 a = { 100, 100 };
+	Vec2 b = { 200, 200 };
+	Color c;
+	c.SetR(100);
+	c.SetG(50);
+	c.SetB(100);
+	c.SetA(255);
+	gfx.DrawLine(a, b, c);
+	gfx.DrawLine({ 300,200 }, { 75,75 },c);
 }

@@ -26,6 +26,8 @@
 #include <string>
 #include <array>
 
+#include "Utilies.h"
+
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
 namespace FramebufferShaders
@@ -314,6 +316,54 @@ void Graphics::PutPixel( int x,int y,Color c )
 	assert( y >= 0 );
 	assert( y < int( Graphics::ScreenHeight ) );
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
+}
+
+///Me stuff.
+void Graphics::DrawLine(Vec2 p1, Vec2 p2, Color c)
+{
+	int dX = p2.x - p1.x;
+	int dY = p2.y - p1.y;
+	if (dX == 0 && dY == 0) {
+		PutPixel(p1.x, p1.y, c);
+	}
+	else if (abs(dY) > abs(dX))
+	{
+		if (dY < 0)
+		{
+			int temp = p1.x;
+			p1.x = p2.x;
+			p2.x = temp;
+			temp = p1.y;
+			p1.y = p2.y;
+			p2.y = temp;
+		}
+		float m = (float)dX / (float)dY;
+		float b = p1.x - (m *p1.y);
+		for (int y = p1.y; y <= p2.y; y = y + 1)
+		{
+			int x = (int)(m*y + b + 0.5f);
+			PutPixel(x, y, c);
+		}
+	}
+	else
+	{
+		if (dX < 0)
+		{
+			int temp = p1.x;
+			p1.x = p2.x;
+			p2.x = temp;
+			temp = p1.y;
+			p1.y = p2.y;
+			p2.y = temp;
+		}
+		float m = (float)dY / (float)dX;
+		float b = p1.y - m * p1.x;
+		for (int x = p1.x; x <= p2.x; x = x + 1)
+		{
+			int y = (int)(m*x + b + 0.5f);
+			PutPixel(x, y, c);
+		}
+	}
 }
 
 
