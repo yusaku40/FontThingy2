@@ -39,6 +39,7 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	//this is a test
+	// this is a test 2
 }
 
 void Game::ComposeFrame()
