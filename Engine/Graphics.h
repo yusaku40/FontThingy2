@@ -57,10 +57,16 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
-	///My adds
-	void DrawLine(Vec2 p1, Vec2 p2, Color c);
-
+	
 	~Graphics();
+	
+	///My adds///////////////////////////////////////////////////////////////////////
+	void DrawLine(Vec2 p1, Vec2 p2, Color c);
+	void DrawLine(int x1, int y1, int x2, int y2, Color c);
+
+	////////End My Adds/////////////////////////////////////////////////////////////
+
+	
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11Device>				pDevice;

@@ -21,6 +21,10 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "Utilies.h"
+#include "Font.h"
+///Globalsish////
+Font font;
+char buffer[50];
 
 Game::Game( MainWindow& wnd )
 	:
@@ -53,4 +57,6 @@ void Game::ComposeFrame()
 	c.SetA(255);
 	gfx.DrawLine(a, b, c);
 	gfx.DrawLine({ 300,200 }, { 75,75 },c);
+	char temp =wnd.kbd.ReadChar();
+	font.PrintGlyph(gfx, temp, 100, 200, c);
 }
