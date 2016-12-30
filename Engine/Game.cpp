@@ -25,6 +25,10 @@
 ///Globalsish////
 Font font;
 char buffer[50];
+char b2[10];
+int bCount = 0;
+char cTemp;
+
 
 Game::Game( MainWindow& wnd )
 	:
@@ -35,6 +39,9 @@ Game::Game( MainWindow& wnd )
 
 void Game::Go()
 {
+
+
+
 	gfx.BeginFrame();	
 	UpdateModel();
 	ComposeFrame();
@@ -48,15 +55,33 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	Vec2 a = { 100, 100 };
-	Vec2 b = { 200, 200 };
+	
 	Color c;
 	c.SetR(100);
 	c.SetG(50);
 	c.SetB(100);
 	c.SetA(255);
-	gfx.DrawLine(a, b, c);
-	gfx.DrawLine({ 300,200 }, { 75,75 },c);
-	char temp =wnd.kbd.ReadChar();
-	font.PrintGlyph(gfx, temp, 100, 200, c);
+
+	
+	
+
+	if (bCount < 49) {
+		cTemp =wnd.kbd.ReadChar();
+		if (cTemp != 0) {
+			buffer[bCount] = cTemp;
+			bCount++;
+		}	
+	}
+	else {
+		bCount = 0;
+		for (int i = 0; i < 50; i++) {
+			buffer[i] = 0;
+		}
+	}
+	font.PrintS(gfx, buffer, 50, 300, c);
+	_itoa_s(strlen(buffer), b2, 10);
+	font.PrintS(gfx,b2,20,400,c);
 }
+	
+	
+	
