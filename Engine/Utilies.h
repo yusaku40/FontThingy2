@@ -1,5 +1,5 @@
 #pragma once
-
+#include <vector>
 
 class Vec2 {
 public:
@@ -9,18 +9,29 @@ public:
 	int y;
 	
 };
-struct tRect {
-	Vec2 llCorner;
+
+class tLine {
+public:
+	void operator=(char* c);
+	char text[50];
+private:
+	
+};
+
+class tRect {
+public:
+	tRect(Vec2 lCorn, int width, int height);
+	void Push(const char* st);
+
 	int width;
 	int height;
 	int cWidth;
 	int cHeight;
-	char* data =nullptr;
-};
-
-class tLine {
-public:
-
+	std::vector<char> vText;
+	int xPos;
+	int yPos;
+	Vec2 llCorner;
 private:
+	
 
 };

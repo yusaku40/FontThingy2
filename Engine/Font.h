@@ -35,8 +35,9 @@ public:				//public methods
 	
 	bool PrintGlyph(Graphics& gRef, int glyph,int startX,int startY,Color color);
 	void PrintS(Graphics& gfx, const char* text, int X, int Y, Color color);
+	void PrintS(Graphics & gfx, tRect & trect,  Color color); //overload for text Rectangle testing
 
-	void PrintRect(Graphics & gfx, tRect& tr);
+	void PrintRect(Graphics & gfx, tRect& tr,Color c);
 
 private:			//private vars
 	

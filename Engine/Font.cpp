@@ -6,6 +6,9 @@ Font Lib test
 #include "Utilies.h"
 #include "Graphics.h"
 
+///globals??
+int sPos = 0;
+
 Font::Font()	
 {
 	
@@ -579,21 +582,75 @@ void Font::PrintS(Graphics & gfx, const char * text, int X, int Y, Color color)
 	}
 }
 
-void Font::PrintRect(Graphics& gfx, tRect& tr) {
+void Font::PrintS(Graphics & gfx, tRect& trect, Color color)
+{
+	if (trect.vText.size() > 0) {
+
 	
-	int xPos = tr.llCorner.x;
-	int yPos = tr.llCorner.y;
-
-	Color tempC;
-	tempC.SetA(255);
-	tempC.SetR(255);
-	tempC.SetG(255);
-	tempC.SetB(255);
-
-	for (int i = 0; i <= strlen(tr.data); i++) {
-		if (tr.data[i] = 13) {
-			yPos = yPos + 10;
+		for (int i = 0; i <= trect.vText.size() - 1; i++) {
+			if ((trect.xPos + i * 10) < gfx.ScreenWidth - 10) {
+				PrintGlyph(gfx, trect.vText[i], trect.xPos + (i * 10), trect.yPos, color);
+			}
 		}
-		PrintGlyph(gfx, tr.data[i], xPos, yPos, tempC);
 	}
 }
+
+void Font::PrintRect(Graphics & gfx, tRect & tr, Color c)
+{
+	Vec2 BRcorner = { tr.llCorner.x + tr.width,tr.llCorner.y + tr.height };
+	Vec2 TRcorner = { tr.llCorner.x + tr.width,tr.llCorner.y  };
+	Vec2 BLcorner = { tr.llCorner.x ,tr.llCorner.y + tr.height };
+
+	gfx.DrawLine(tr.llCorner, TRcorner, c);
+	gfx.DrawLine(tr.llCorner, BLcorner, c);
+	gfx.DrawLine(BLcorner, BRcorner, c);
+	gfx.DrawLine(TRcorner, BRcorner, c);
+
+	char cTemp; /// for lost char on window refresh
+
+	int Xoff = tr.llCorner.x;
+	int Yoff = tr.llCorner.y + 12 ;
+	tr.xPos = Xoff;
+	tr.yPos = Yoff ;
+	int rEdge = tr.llCorner.x + tr.width;
+	int bEdge = tr.llCorner.y + tr.height;
+
+	if (tr.vText.size() > 0) {
+		for (int i = 0; i < tr.vText.size(); i++) {
+			if (tr.vText[i] != 13 && tr.xPos < rEdge)
+			{
+				PrintGlyph(gfx, tr.vText[i], tr.xPos, tr.yPos, c);
+				tr.xPos += 10;
+				
+			}
+			
+			//if char is carriage return go down 1 line and back to beginning
+			if (tr.vText[i] == 13) {
+				if (i < tr.vText.size() - 1)
+				{
+					tr.xPos = tr.llCorner.x;
+					tr.yPos += 12;
+				}
+			}
+			
+			//make sure not past right edge of window wrap if neccessary
+			if (tr.xPos >= rEdge - 5) {
+				tr.xPos = tr.llCorner.x;
+				tr.yPos += 12;
+			}
+
+			//make sure not past bottom of window//
+			if (tr.yPos >= bEdge) {		
+				cTemp = tr.vText.back(); // saving last char for refreshed window
+				tr.vText.clear();
+				tr.xPos = Xoff;
+				tr.yPos = Yoff;
+				tr.vText.push_back(cTemp);
+			}
+			
+		}
+	}
+}
+
+
+

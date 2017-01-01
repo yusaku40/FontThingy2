@@ -22,12 +22,22 @@
 #include "Game.h"
 #include "Utilies.h"
 #include "Font.h"
+#include <iostream>
+#include <math.h>
+
 ///Globalsish////
 Font font;
 char buffer[50];
 char b2[10];
 int bCount = 0;
 char cTemp;
+tRect txtRect({ 1,619 },1270 ,100);
+bool msgPrinted = false;
+
+SYSTEMTIME st;
+int oldMs = 1;
+int deltaMs = 1;
+int fps = 0;
 
 
 Game::Game( MainWindow& wnd )
@@ -39,9 +49,6 @@ Game::Game( MainWindow& wnd )
 
 void Game::Go()
 {
-
-
-
 	gfx.BeginFrame();	
 	UpdateModel();
 	ComposeFrame();
@@ -53,34 +60,77 @@ void Game::UpdateModel()
 	
 }
 
+void FpsWindow(Graphics& gfx) {
+	//fps system parts
+	char buffer3[10];
+	Color color = { 200,100,255 };
+
+	GetSystemTime(&st);
+	deltaMs = oldMs - st.wMilliseconds;
+
+	fps = 1000 / deltaMs;
+	_itoa_s(fps, buffer3, 10);
+
+	font.PrintS(gfx,"FPS: ",1200, 20 ,color);
+	font.PrintS(gfx, buffer3, 1230, 20,  color);
+
+
+
+	oldMs = st.wMilliseconds;
+
+
+	gfx.DrawLine({ 1190,30 }, { 1279,30 }, { 150,50,150 });
+	gfx.DrawLine({ 1190,30 }, { 1190,0 }, { 150,50,150 });
+}
+
 void Game::ComposeFrame()
 {
 	
 	Color c;
 	c.SetR(100);
-	c.SetG(50);
+	c.SetG(140);
 	c.SetB(100);
 	c.SetA(255);
 
 	
-	
+	FpsWindow(gfx);
+
 
 	if (bCount < 49) {
 		cTemp =wnd.kbd.ReadChar();
+		
 		if (cTemp != 0) {
-			buffer[bCount] = cTemp;
-			bCount++;
+			if (cTemp ==8) {
+				if (txtRect.vText.size()>0) {
+					txtRect.vText.pop_back();
+				}
+			}
+			else {
+				txtRect.vText.push_back(cTemp);
+				bCount++;
+			}
+			
 		}	
 	}
 	else {
 		bCount = 0;
-		for (int i = 0; i < 50; i++) {
-			buffer[i] = 0;
-		}
+		
 	}
-	font.PrintS(gfx, buffer, 50, 300, c);
-	_itoa_s(strlen(buffer), b2, 10);
-	font.PrintS(gfx,b2,20,400,c);
+	font.PrintRect(gfx, txtRect, c);
+
+	_itoa_s(txtRect.vText.size(), b2, 10);
+	font.PrintS(gfx,b2,500,400,c);
+	if (wnd.mouse.LeftIsPressed()&& !msgPrinted) {
+		txtRect.Push(" L Mouse button is pressed ");
+		char cr =13;
+		txtRect.Push(&cr);
+		msgPrinted= true;
+	}
+	if (!wnd.mouse.LeftIsPressed()) {
+		msgPrinted = false;
+	}
+	
+	
 }
 	
 	
