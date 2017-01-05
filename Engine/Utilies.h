@@ -21,7 +21,8 @@ private:
 class tRect {
 public:
 	tRect(Vec2 lCorn, int width, int height);
-	void Push(const char* st);
+	void Push(const char* st); //push a text string into textRec
+	void PushC(char ch);		//push a single char to textRectangle
 
 	int width;
 	int height;

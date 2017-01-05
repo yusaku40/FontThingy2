@@ -25,6 +25,7 @@
 #include <iostream>
 #include <math.h>
 
+
 ///Globalsish////
 Font font;
 char buffer[50];
@@ -38,6 +39,7 @@ SYSTEMTIME st;
 int oldMs = 1;
 int deltaMs = 1;
 int fps = 0;
+
 
 
 Game::Game( MainWindow& wnd )
@@ -83,24 +85,51 @@ void FpsWindow(Graphics& gfx) {
 	gfx.DrawLine({ 1190,30 }, { 1190,0 }, { 150,50,150 });
 }
 
-void Game::ComposeFrame()
-{
-	
-	Color c;
-	c.SetR(100);
-	c.SetG(140);
-	c.SetB(100);
-	c.SetA(255);
+void pRain(Graphics& gfx) {
+	static int pOff1;
+	static int pOff2;
+	static int pOff3;
 
-	
-	FpsWindow(gfx);
+	Color c(255, 0, 255);
+	//fg rain
+	if (pOff1 < 300) {
 
+		int test = rand();
+		int test2 = rand() / 255;
+		
+
+		gfx.DrawLine(10, 10 + pOff1, 10, 40 + pOff1, c);
+		gfx.DrawLine(50, 20 + pOff1, 50, 50 + pOff1, c);
+		gfx.DrawLine(70, 40 + pOff1, 70, 70 + pOff1, c);
+		gfx.DrawLine(200, 10 + pOff1, 200, 40 + pOff1, c);
+		pOff1 = pOff1 + 10;
+	}
+	else {
+		pOff1 = 0;
+	}
+	//mid rain
+	Color c2(200, 0, 200);
+	if (pOff2 < 300) {
+		gfx.DrawLine(20 , 10 + pOff2, 20 , 20 + pOff2, c2);
+		gfx.DrawLine(80 , 10 + pOff2, 80 , 20 + pOff2, c2);
+		gfx.DrawLine(90 , 10 + pOff2, 90 , 20 + pOff2, c2);
+		gfx.DrawLine(150, 10 + pOff2, 150, 20 + pOff2, c2);
+		pOff2 = pOff2 + 6;
+	}
+	else {
+		pOff2 = 0;
+	}
+
+}
+
+void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
+	Color c(150, 150, 150);
 
 	if (bCount < 49) {
-		cTemp =wnd.kbd.ReadChar();
-		
+		cTemp = wnd.kbd.ReadChar();
+
 		if (cTemp != 0) {
-			if (cTemp ==8) {
+			if (cTemp == 8) {
 				if (txtRect.vText.size()>0) {
 					txtRect.vText.pop_back();
 				}
@@ -109,26 +138,33 @@ void Game::ComposeFrame()
 				txtRect.vText.push_back(cTemp);
 				bCount++;
 			}
-			
-		}	
+
+		}
 	}
 	else {
 		bCount = 0;
-		
+
 	}
 	font.PrintRect(gfx, txtRect, c);
 
 	_itoa_s(txtRect.vText.size(), b2, 10);
-	font.PrintS(gfx,b2,500,400,c);
-	if (wnd.mouse.LeftIsPressed()&& !msgPrinted) {
+	font.PrintS(gfx, b2, 500, 400, c);
+	if (wnd.mouse.LeftIsPressed() && !msgPrinted) {
 		txtRect.Push(" L Mouse button is pressed ");
-		char cr =13;
-		txtRect.Push(&cr);
-		msgPrinted= true;
+		txtRect.PushC(13);
+		msgPrinted = true;
 	}
 	if (!wnd.mouse.LeftIsPressed()) {
 		msgPrinted = false;
 	}
+}
+
+void Game::ComposeFrame()
+{
+	
+	FpsWindow(gfx);
+
+	
 	
 	
 }

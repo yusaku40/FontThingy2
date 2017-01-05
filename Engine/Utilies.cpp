@@ -43,3 +43,10 @@ void tRect::Push(const char * st)
 		}
 	}
 }
+
+void tRect::PushC(char ch)
+{
+	if (ch > 7 && ch < 127) {
+		this->vText.push_back(ch);
+	}
+}

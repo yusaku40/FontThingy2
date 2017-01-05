@@ -318,7 +318,7 @@ void Graphics::PutPixel( int x,int y,Color c )
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
-///Me stuff.
+///Me stuff.///////////////
 void Graphics::DrawLine(Vec2 p1, Vec2 p2, Color c)
 {
 	int dX = p2.x - p1.x;
@@ -365,6 +365,7 @@ void Graphics::DrawLine(Vec2 p1, Vec2 p2, Color c)
 		}
 	}
 }
+//simple overload for drawline//
 void Graphics::DrawLine(int x1, int y1, int x2, int y2, Color c) {
 	DrawLine({ x1,y1 }, { x2,y2 }, c);
 
