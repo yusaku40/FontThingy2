@@ -35,10 +35,6 @@ char cTemp;
 tRect txtRect({ 1,619 },1270 ,100);
 bool msgPrinted = false;
 
-SYSTEMTIME st;
-int oldMs = 1;
-int deltaMs = 1;
-int fps = 0;
 
 
 
@@ -64,14 +60,30 @@ void Game::UpdateModel()
 
 void FpsWindow(Graphics& gfx) {
 	//fps system parts
+	static int fps[20];  ///for averaging fps rahter than be flickery
+	SYSTEMTIME st;
 	char buffer3[10];
 	Color color = { 200,100,255 };
 
+	int tempSum =0;
+
 	GetSystemTime(&st);
+	static int oldMs;
+	static int deltaMs;
 	deltaMs = oldMs - st.wMilliseconds;
 
-	fps = 1000 / deltaMs;
-	_itoa_s(fps, buffer3, 10);
+
+	//calculate average of fps///
+	for (int i = 0; i < 19; i++) {
+		fps[i + 1] = fps[i]; //move old measure down the stack
+	}
+	fps[0] = 1000 / deltaMs; //add new fps measure
+	for (int i = 0; i < 20; i++) {
+		tempSum = tempSum + fps[i];
+	}
+	_itoa_s(tempSum / 20, buffer3, 10);
+	//tempSum = 0;
+	///end calculate average fps///
 
 	font.PrintS(gfx,"FPS: ",1200, 20 ,color);
 	font.PrintS(gfx, buffer3, 1230, 20,  color);
@@ -159,13 +171,83 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	}
 }
 
+void DrawColorBar(Graphics& gfx) {
+	int Xpos=20;
+	int Ypos=20;
+	int t=30; // thickness of bar
+	Color c;
+	
+	//draw border in contrasting color
+	Color bColor(200, 200, 200);
+	gfx.DrawLine(Xpos, Ypos, Xpos + 256, Ypos, bColor);
+	gfx.DrawLine(Xpos, Ypos-1, Xpos + 256, Ypos-1, bColor);
+	gfx.DrawLine(Xpos, Ypos + t, Xpos + 256, Ypos + t, bColor);
+	gfx.DrawLine(Xpos, Ypos + t + 1, Xpos + 256, Ypos + t + 1, bColor);
+	gfx.DrawLine(Xpos, Ypos, Xpos , Ypos + t, bColor);
+	gfx.DrawLine(Xpos - 1, Ypos, Xpos -1, Ypos + t, bColor);
+	gfx.DrawLine(Xpos + 256, Ypos, Xpos + 256, Ypos + t, bColor);
+	gfx.DrawLine(Xpos + 257, Ypos, Xpos + 257, Ypos + t, bColor);
+
+
+	for (int a = 0; a < 256; a++) {
+		c.SetR(a);
+
+		gfx.DrawLine(Xpos + a, Ypos, Xpos + a, Ypos + t, c);
+	}
+
+	////Green Bar/////////
+	Xpos = 20;
+	Ypos = Ypos+35;
+	c.SetR(0);
+	//draw border in contrasting color
+	
+	gfx.DrawLine(Xpos, Ypos, Xpos + 256, Ypos, bColor);
+	gfx.DrawLine(Xpos, Ypos - 1, Xpos + 256, Ypos - 1, bColor);
+	gfx.DrawLine(Xpos, Ypos + t, Xpos + 256, Ypos + t, bColor);
+	gfx.DrawLine(Xpos, Ypos + t + 1, Xpos + 256, Ypos + t + 1, bColor);
+	gfx.DrawLine(Xpos, Ypos, Xpos, Ypos + t, bColor);
+	gfx.DrawLine(Xpos - 1, Ypos, Xpos - 1, Ypos + t, bColor);
+	gfx.DrawLine(Xpos + 256, Ypos, Xpos + 256, Ypos + t, bColor);
+	gfx.DrawLine(Xpos + 257, Ypos, Xpos + 257, Ypos + t, bColor);
+
+
+	for (int a = 0; a < 256; a++) {
+		c.SetG(a);
+
+		gfx.DrawLine(Xpos + a, Ypos, Xpos + a, Ypos + t, c);
+	}
+
+	////Blue bar/////////
+	Xpos = 20;
+	Ypos = Ypos + 35;
+	c.SetR(0);
+	c.SetG(0);
+	//draw border in contrasting color
+
+	gfx.DrawLine(Xpos, Ypos, Xpos + 256, Ypos, bColor);
+	gfx.DrawLine(Xpos, Ypos - 1, Xpos + 256, Ypos - 1, bColor);
+	gfx.DrawLine(Xpos, Ypos + t, Xpos + 256, Ypos + t, bColor);
+	gfx.DrawLine(Xpos, Ypos + t + 1, Xpos + 256, Ypos + t + 1, bColor);
+	gfx.DrawLine(Xpos, Ypos, Xpos, Ypos + t, bColor);
+	gfx.DrawLine(Xpos - 1, Ypos, Xpos - 1, Ypos + t, bColor);
+	gfx.DrawLine(Xpos + 256, Ypos, Xpos + 256, Ypos + t, bColor);
+	gfx.DrawLine(Xpos + 257, Ypos, Xpos + 257, Ypos + t, bColor);
+
+
+	for (int a = 0; a < 256; a++) {
+		c.SetB(a);
+
+		gfx.DrawLine(Xpos + a, Ypos, Xpos + a, Ypos + t, c);
+	}
+}
+
+
 void Game::ComposeFrame()
 {
 	
 	FpsWindow(gfx);
+	DrawColorBar(gfx);
 
-	
-	
 	
 }
 	
