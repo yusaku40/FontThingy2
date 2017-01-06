@@ -35,6 +35,11 @@ char cTemp;
 tRect txtRect({ 1,619 },1270 ,100);
 bool msgPrinted = false;
 
+////PixelEdit TempGlobals
+const int pixWsize = 32;
+const int pixHsize = 32;
+unsigned int pixels[pixWsize][pixHsize];
+
 
 
 
@@ -171,14 +176,22 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	}
 }
 
-void DrawColorBar(Graphics& gfx) {
+Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 	int Xpos=20;
 	int Ypos=20;
 	int t=30; // thickness of bar
 	Color c;
+	Color bColor(200, 200, 200); // Border Color
+	//mouse stuff
+	int mX = 0;
+	int mY = 0;
+	//color selection stuff
+	static unsigned char rTemp ;
+	static unsigned char gTemp ;
+	static unsigned char bTemp ;
 	
+	///Red Bar///////////
 	//draw border in contrasting color
-	Color bColor(200, 200, 200);
 	gfx.DrawLine(Xpos, Ypos, Xpos + 256, Ypos, bColor);
 	gfx.DrawLine(Xpos, Ypos-1, Xpos + 256, Ypos-1, bColor);
 	gfx.DrawLine(Xpos, Ypos + t, Xpos + 256, Ypos + t, bColor);
@@ -239,15 +252,102 @@ void DrawColorBar(Graphics& gfx) {
 
 		gfx.DrawLine(Xpos + a, Ypos, Xpos + a, Ypos + t, c);
 	}
+	
+	/////////////////Get Mouse Click for color////////////////////
+	if(wnd.mouse.LeftIsPressed()){
+		mX = wnd.mouse.GetPosX();
+		mY = wnd.mouse.GetPosY();
+		if (mY > 20 && mY < 20 + t && mX >= 20 && mX < 20 + 256) { //check red
+			rTemp = (mX - 20);
+		}
+		if (mY > 55 && mY < 55 + t && mX >= 20 && mX < 20 + 256) { //check green
+			gTemp = (mX - 20);
+		}
+		if (mY > 90 && mY < 90 + t && mX >= 20 && mX < 20 + 256) { //check Blue
+			bTemp = (mX - 20);
+		}
+
+	}
+
+	////draw current color
+	Color tColor(rTemp, gTemp, bTemp);
+	for (int i = 0; i < 20;i++){
+		gfx.DrawLine(300, i + 60, 320, i + 60, tColor);
+		
+	}
+	return tColor;
 }
 
+void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
+	const int pGridX = 32;	//grid size in blocks aka "pixels"
+	const int pGridY = 32;	//grid size in blocks aka "pixels"
+	const int StartX = 350;
+	const int StartY = 30;
+	const int blockWidth = 20;
+	const int blockHeight = 20;
+	int TotalHeight = pGridY * blockHeight;
+	int TotalWidth = pGridX * blockWidth;
+
+	
+	Color c(150, 150, 150);
+
+
+	gfx.DrawLine(StartX, StartY, StartX + blockWidth * pGridX, StartY, c);
+	
+	for (int i = 0; i <= pGridX; i++) {
+		gfx.DrawLine(i*blockWidth+StartX, StartY, i * blockWidth + StartX, StartY + TotalHeight,c);
+	}
+	for (int i = 0; i <= pGridY; i++) {
+		gfx.DrawLine(StartX, i * blockHeight + StartY,  StartX + TotalWidth, i * blockHeight + StartY, c);
+	}
+
+	if (wnd.mouse.LeftIsPressed()) {
+		int tempX = wnd.mouse.GetPosX();
+		int tempY = wnd.mouse.GetPosY();
+		int gX = (tempX - StartX) / blockWidth;
+		if (gX >= pGridX) gX = pGridX-1;
+		int gY = (tempY - StartY) / blockHeight;
+		if (gY < 0) gY = 0;
+		if (gY >= pGridY) gY = pGridY - 1;
+		pixels[gX][gY] = putColor.dword;	
+
+		
+	}
+
+	//test print Mouse X and Y
+	char buffer[16];
+	_itoa_s(wnd.mouse.GetPosX(), buffer, 10);
+	font.PrintS(gfx, buffer, 10, 500, c);
+	_itoa_s(wnd.mouse.GetPosY(), buffer, 10);
+	font.PrintS(gfx, buffer, 10, 520, c);
+
+
+
+	//drawpixel
+	for (int x = 0; x < pGridX; x++) {
+		for (int y = 0; y < pGridY; y++) {
+			gfx.DrawFRect(StartX + (x * blockWidth)+1, StartY + (y * blockHeight) +1, (blockWidth - 2), (blockHeight - 2), pixels[x][y]);
+		}
+	}
+
+	///draw at normal res for reference
+	const int Xoff = 50;
+	const int Yoff = 500;
+	for (int x = 0; x < pGridX; x++) {
+		for (int y = 0; y < pGridY; y++) {
+			gfx.PutPixel(x + Xoff, y + Yoff, pixels[x][y]);
+		}
+	}
+}
 
 void Game::ComposeFrame()
 {
-	
+	Color test;
 	FpsWindow(gfx);
-	DrawColorBar(gfx);
-
+	test = DrawColorPicker(gfx,wnd);
+	font.PrintS(gfx, "spork", 200, 500, test);
+	DrawGrid(gfx,wnd,test);
+	
 	
 }
 	

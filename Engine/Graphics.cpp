@@ -371,6 +371,14 @@ void Graphics::DrawLine(int x1, int y1, int x2, int y2, Color c) {
 
 }
 
+void Graphics::DrawFRect(int x1, int y1, int width, int height, Color c) {
+	for (int y = y1; y < y1 + height;y++)
+	{
+		DrawLine(x1, y, x1 + width, y , c);
+
+	}
+}
+
 //////////////////////////////////////////////////
 //           Graphics Exception
 Graphics::Exception::Exception( HRESULT hr,const std::wstring& note,const wchar_t* file,unsigned int line )

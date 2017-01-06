@@ -64,6 +64,8 @@ public:
 	void DrawLine(Vec2 p1, Vec2 p2, Color c);
 	void DrawLine(int x1, int y1, int x2, int y2, Color c);
 
+	void DrawFRect(int x1, int y1, int width, int height, Color c);
+
 	////////End My Adds/////////////////////////////////////////////////////////////
 
 	
