@@ -24,9 +24,11 @@
 #include "Font.h"
 #include <iostream>
 #include <math.h>
+#include "Sprite.h"
 
 
 ///Globalsish////
+Sprite sprite;
 Font font;
 char buffer[50];
 char b2[10];
@@ -403,6 +405,14 @@ void Game::ComposeFrame()
 	font.PrintS(gfx, "spork", 200, 500, test);
 	DrawGrid(gfx,wnd,test);
 	
+	if (wnd.kbd.KeyIsPressed(VK_F5)) {
+		for (int x = 0; x < pixWsize; x++) {
+			for (int y = 0; y < pixHsize; y++) {
+				sprite.data.push_back(pixels[x][y]);
+			}
+		}
+		sprite.SaveSprite();
+	}
 	
 }
 	
