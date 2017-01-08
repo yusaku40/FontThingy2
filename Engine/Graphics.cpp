@@ -272,7 +272,7 @@ void Graphics::EndFrame()
 	// perform the copy line-by-line
 	for( size_t y = 0u; y < Graphics::ScreenHeight; y++ )
 	{
-		memcpy( &pDst[ y * dstPitch ],&pSysBuffer[y * srcPitch],rowBytes );
+		memmove( &pDst[ y * dstPitch ],&pSysBuffer[y * srcPitch],rowBytes ); //changed from memcompy to memmove
 	}
 	// release the adapter memory
 	pImmediateContext->Unmap( pSysBufferTexture.Get(),0u );
@@ -377,6 +377,15 @@ void Graphics::DrawFRect(int x1, int y1, int width, int height, Color c) {
 		DrawLine(x1, y, x1 + width, y , c);
 
 	}
+}
+
+void Graphics::DrawRectTest(int x1, int y1, int width, int height, Color c) {
+	D3D10_RECT dR;
+	dR.left = x1;
+	dR.top = y1;
+	dR.right = x1 + width;
+	dR.bottom = y1 + height;
+	
 }
 
 //////////////////////////////////////////////////

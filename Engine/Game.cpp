@@ -65,7 +65,7 @@ void Game::UpdateModel()
 
 void FpsWindow(Graphics& gfx) {
 	//fps system parts
-	static int fps[20];  ///for averaging fps rahter than be flickery
+	static int fps[60];  ///for averaging fps rahter than be flickery
 	SYSTEMTIME st;
 	char buffer3[10];
 	Color color = { 200,100,255 };
@@ -79,14 +79,14 @@ void FpsWindow(Graphics& gfx) {
 
 
 	//calculate average of fps///
-	for (int i = 0; i < 19; i++) {
+	for (int i = 0; i < 59; i++) {
 		fps[i + 1] = fps[i]; //move old measure down the stack
 	}
 	fps[0] = 1000 / deltaMs; //add new fps measure
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 60; i++) {
 		tempSum = tempSum + fps[i];
 	}
-	_itoa_s(tempSum / 20, buffer3, 10);
+	_itoa_s(tempSum / 60, buffer3, 10);
 	//tempSum = 0;
 	///end calculate average fps///
 
@@ -185,12 +185,20 @@ Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 	//mouse stuff
 	int mX = 0;
 	int mY = 0;
+	////stuff from drawgrid
+	const int StartX = 350;
+	const int StartY = 30;
+	const int pGridX = 32;	//grid size in blocks aka "pixels"
+	const int pGridY = 32;	//grid size in blocks aka "pixels"
+	const int blockWidth = 20;
+	const int blockHeight = 20;
+	
 	//color selection stuff
 	static unsigned char rTemp ;
 	static unsigned char gTemp ;
 	static unsigned char bTemp ;
 	
-	///Red Bar///////////
+	////Red Bar///////////
 	//draw border in contrasting color
 	gfx.DrawLine(Xpos, Ypos, Xpos + 256, Ypos, bColor);
 	gfx.DrawLine(Xpos, Ypos-1, Xpos + 256, Ypos-1, bColor);
@@ -207,6 +215,8 @@ Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 
 		gfx.DrawLine(Xpos + a, Ypos, Xpos + a, Ypos + t, c);
 	}
+	
+	
 
 	////Green Bar/////////
 	Xpos = 20;
@@ -269,8 +279,41 @@ Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 
 	}
 
-	////draw current color
 	Color tColor(rTemp, gTemp, bTemp);
+
+	if (wnd.mouse.LeftIsPressed() && wnd.kbd.KeyIsPressed(VK_SPACE)) {
+		int tempX = wnd.mouse.GetPosX();
+		int tempY = wnd.mouse.GetPosY();
+		int gX = (tempX - StartX) / blockWidth;
+		if (gX >= pGridX) gX = pGridX - 1;
+		int gY = (tempY - StartY) / blockHeight;
+		if (gY < 0) gY = 0;
+		if (gY >= pGridY) gY = pGridY - 1;
+		tColor.dword = pixels[gX][gY];
+		rTemp = tColor.GetR();
+		gTemp = tColor.GetG();
+		bTemp = tColor.GetB();
+	}
+
+
+	//rgb values
+	//R
+	char bufferRgb[10];
+	font.PrintS(gfx, "Red: ", 20, 200, bColor);
+	_itoa_s((int)rTemp, bufferRgb, 10);
+	font.PrintS(gfx, bufferRgb, 60, 200, bColor);
+
+	//G
+	font.PrintS(gfx, "Green: ", 20, 212, bColor);
+	_itoa_s((int)gTemp, bufferRgb, 10);
+	font.PrintS(gfx, bufferRgb, 80, 212, bColor);
+
+	//B
+	font.PrintS(gfx, "Blue: ", 20, 224, bColor);
+	_itoa_s((int)bTemp, bufferRgb, 10);
+	font.PrintS(gfx, bufferRgb, 80, 224, bColor);
+
+	////draw current color
 	for (int i = 0; i < 20;i++){
 		gfx.DrawLine(300, i + 60, 320, i + 60, tColor);
 		
@@ -287,7 +330,8 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 	const int blockHeight = 20;
 	int TotalHeight = pGridY * blockHeight;
 	int TotalWidth = pGridX * blockWidth;
-
+	///mouse stuff
+	
 	
 	Color c(150, 150, 150);
 
@@ -301,7 +345,8 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 		gfx.DrawLine(StartX, i * blockHeight + StartY,  StartX + TotalWidth, i * blockHeight + StartY, c);
 	}
 
-	if (wnd.mouse.LeftIsPressed()) {
+	
+	if (wnd.mouse.LeftIsPressed()&& wnd.kbd.KeyIsPressed(VK_SPACE)) {
 		int tempX = wnd.mouse.GetPosX();
 		int tempY = wnd.mouse.GetPosY();
 		int gX = (tempX - StartX) / blockWidth;
@@ -309,9 +354,19 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 		int gY = (tempY - StartY) / blockHeight;
 		if (gY < 0) gY = 0;
 		if (gY >= pGridY) gY = pGridY - 1;
-		pixels[gX][gY] = putColor.dword;	
+		putColor.dword = pixels[gX][gY];
+	}
 
-		
+	//put current color into array
+	if (wnd.mouse.LeftIsPressed()) {
+		int tempX = wnd.mouse.GetPosX();
+		int tempY = wnd.mouse.GetPosY();
+		int gX = (tempX - StartX) / blockWidth;
+		if (gX >= pGridX) gX = pGridX - 1;
+		int gY = (tempY - StartY) / blockHeight;
+		if (gY < 0) gY = 0;
+		if (gY >= pGridY) gY = pGridY - 1;
+		pixels[gX][gY] = putColor.dword;
 	}
 
 	//test print Mouse X and Y

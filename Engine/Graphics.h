@@ -66,6 +66,8 @@ public:
 
 	void DrawFRect(int x1, int y1, int width, int height, Color c);
 
+	void DrawRectTest(int x1, int y1, int width, int height, Color c);
+
 	////////End My Adds/////////////////////////////////////////////////////////////
 
 	
