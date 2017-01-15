@@ -1,6 +1,12 @@
 #pragma once
 #include <vector>
 
+///functions///
+void clamp(int& i, int min, int max);
+
+
+
+//classes
 class Vec2 {
 public:
 	Vec2();
@@ -34,5 +40,4 @@ public:
 	Vec2 llCorner;
 private:
 	
-
 };

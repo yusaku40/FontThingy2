@@ -1,11 +1,12 @@
 
 #include "Misc.h"
+#include "Portals.h"
 
 
 
 
 
-void pRain(Graphics& gfx) {
+void pRain(Graphics& gfx,SimplePortal& rPortal) {
 	static int pOff1;
 	static int pOff2;
 	static int pOff3;

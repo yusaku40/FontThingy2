@@ -315,6 +315,9 @@ void Graphics::PutPixel( int x,int y,Color c )
 	assert( x < int( Graphics::ScreenWidth ) );
 	assert( y >= 0 );
 	assert( y < int( Graphics::ScreenHeight ) );
+
+	clamp(x, 0, Graphics::ScreenWidth-1);
+	clamp(y, 0, Graphics::ScreenHeight-1);
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 

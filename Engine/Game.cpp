@@ -27,6 +27,7 @@
 #include "Sprite.h"
 #include "Misc.h"
 #include "Graphics2.h"
+#include "Portals.h"
 
 
 ///Globalsish////
@@ -42,12 +43,15 @@ bool msgPrinted = false;
 Color test;
 Color RainBorder(180, 0, 210);
 
+SimplePortal portal(200, 200, 300, 300, RainBorder);
+
 ////PixelEdit TempGlobals
 const int pixWsize = 32;
 const int pixHsize = 32;
 //unsigned int pixels[pixWsize][pixHsize];
 Color pixels[pixWsize][pixHsize];
 static bool f5Pressed = false;
+
 
 
 
@@ -58,6 +62,7 @@ Game::Game( MainWindow& wnd )
 {
 	
 }
+
 
 void Game::Go()
 {
@@ -407,11 +412,17 @@ void testDrawSprite(Graphics& gfx) {
 
 void Game::ComposeFrame()
 {
+	portal.DrawBorder(gfx);
+	portal.DrawPixel(gfx, { 10, 10 }, RainBorder);
+	portal.DrawPixel(gfx, { 11, 10 }, RainBorder);
+	portal.DrawPixel(gfx, { 12, 10 }, RainBorder);
+	portal.DrawLine(gfx, { 10,10 }, { 30,30 }, RainBorder);
+	
 	
 	//FpsWindow(gfx,font);
 	//test = DrawColorPicker(gfx,wnd);
 	font.PrintS(gfx, "spork", 200, 500, test);
-	DrawFatRect(gfx, 300, 100, 400, 200, RainBorder);
+	//DrawFatRect(gfx, 300, 100, 400, 200, RainBorder);
 	//DrawGrid(gfx,wnd,test);
 
 	//testDrawSprite(gfx);

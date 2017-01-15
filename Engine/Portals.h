@@ -2,6 +2,7 @@
 #include "Utilies.h"
 #include "Colors.h"
 #include "Graphics.h"
+#include "Graphics2.h"
 
 class tPortals {
 public:
@@ -17,8 +18,6 @@ public:
 	Color fgColor;
 	Color bdColor;
 
-	
-
 
 private:
 
@@ -26,9 +25,13 @@ private:
 
 class SimplePortal {
 public:
-	SimplePortal(Graphics gfx,  int x1, int y1, int x2, int y2,Color bColor);
+	SimplePortal( int x1, int y1, int x2, int y2,Color bColor);
+	void DrawBorder(Graphics & gfx);
+	bool DrawPixel(Graphics& gfx, Vec2 loc, Color c);
+	bool DrawLine( Graphics& gfx,Vec2 loc1, Vec2 loc2, Color c);
+	bool MovePortal(Vec2 mov);
 
-
+	
 private:
 	int X1;
 	int Y1;

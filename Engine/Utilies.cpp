@@ -50,3 +50,9 @@ void tRect::PushC(char ch)
 		this->vText.push_back(ch);
 	}
 }
+
+void clamp(int & i, int min, int max)
+{
+	if (i < min) i = min;
+	if (i > max)i = max;
+}
