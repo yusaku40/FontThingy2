@@ -25,6 +25,8 @@
 #include <iostream>
 #include <math.h>
 #include "Sprite.h"
+#include "Misc.h"
+#include "Graphics2.h"
 
 
 ///Globalsish////
@@ -37,11 +39,15 @@ char cTemp;
 tRect txtRect({ 1,619 },1270 ,100);
 bool msgPrinted = false;
 
+Color test;
+Color RainBorder(180, 0, 210);
+
 ////PixelEdit TempGlobals
 const int pixWsize = 32;
 const int pixHsize = 32;
-unsigned int pixels[pixWsize][pixHsize];
-
+//unsigned int pixels[pixWsize][pixHsize];
+Color pixels[pixWsize][pixHsize];
+static bool f5Pressed = false;
 
 
 
@@ -50,6 +56,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
+	
 }
 
 void Game::Go()
@@ -65,81 +72,9 @@ void Game::UpdateModel()
 	
 }
 
-void FpsWindow(Graphics& gfx) {
-	//fps system parts
-	static int fps[60];  ///for averaging fps rahter than be flickery
-	SYSTEMTIME st;
-	char buffer3[10];
-	Color color = { 200,100,255 };
-
-	int tempSum =0;
-
-	GetSystemTime(&st);
-	static int oldMs;
-	static int deltaMs;
-	deltaMs = oldMs - st.wMilliseconds;
-
-
-	//calculate average of fps///
-	for (int i = 0; i < 59; i++) {
-		fps[i + 1] = fps[i]; //move old measure down the stack
-	}
-	fps[0] = 1000 / deltaMs; //add new fps measure
-	for (int i = 0; i < 60; i++) {
-		tempSum = tempSum + fps[i];
-	}
-	_itoa_s(tempSum / 60, buffer3, 10);
-	//tempSum = 0;
-	///end calculate average fps///
-
-	font.PrintS(gfx,"FPS: ",1200, 20 ,color);
-	font.PrintS(gfx, buffer3, 1230, 20,  color);
 
 
 
-	oldMs = st.wMilliseconds;
-
-
-	gfx.DrawLine({ 1190,30 }, { 1279,30 }, { 150,50,150 });
-	gfx.DrawLine({ 1190,30 }, { 1190,0 }, { 150,50,150 });
-}
-
-void pRain(Graphics& gfx) {
-	static int pOff1;
-	static int pOff2;
-	static int pOff3;
-
-	Color c(255, 0, 255);
-	//fg rain
-	if (pOff1 < 300) {
-
-		int test = rand();
-		int test2 = rand() / 255;
-		
-
-		gfx.DrawLine(10, 10 + pOff1, 10, 40 + pOff1, c);
-		gfx.DrawLine(50, 20 + pOff1, 50, 50 + pOff1, c);
-		gfx.DrawLine(70, 40 + pOff1, 70, 70 + pOff1, c);
-		gfx.DrawLine(200, 10 + pOff1, 200, 40 + pOff1, c);
-		pOff1 = pOff1 + 10;
-	}
-	else {
-		pOff1 = 0;
-	}
-	//mid rain
-	Color c2(200, 0, 200);
-	if (pOff2 < 300) {
-		gfx.DrawLine(20 , 10 + pOff2, 20 , 20 + pOff2, c2);
-		gfx.DrawLine(80 , 10 + pOff2, 80 , 20 + pOff2, c2);
-		gfx.DrawLine(90 , 10 + pOff2, 90 , 20 + pOff2, c2);
-		gfx.DrawLine(150, 10 + pOff2, 150, 20 + pOff2, c2);
-		pOff2 = pOff2 + 6;
-	}
-	else {
-		pOff2 = 0;
-	}
-
-}
 
 void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	Color c(150, 150, 150);
@@ -175,6 +110,22 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	}
 	if (!wnd.mouse.LeftIsPressed()) {
 		msgPrinted = false;
+	}
+	///temp placement????
+	if (!f5Pressed) {
+		if (wnd.kbd.KeyIsPressed(VK_F5)) {
+			f5Pressed = true;
+			for (int y = 0; y < pixHsize - 1; y++)
+			{
+				for (int x = 0; x < pixWsize; x++) {
+					sprite.data[y * pixHsize + x] = pixels[x][y];
+				}
+			}
+			sprite.SaveSprite();
+		}
+	}
+	if (wnd.kbd.KeyIsEmpty()) {
+		f5Pressed = false;
 	}
 }
 
@@ -291,7 +242,7 @@ Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 		int gY = (tempY - StartY) / blockHeight;
 		if (gY < 0) gY = 0;
 		if (gY >= pGridY) gY = pGridY - 1;
-		tColor.dword = pixels[gX][gY];
+		tColor = pixels[gX][gY];
 		rTemp = tColor.GetR();
 		gTemp = tColor.GetG();
 		bTemp = tColor.GetB();
@@ -356,7 +307,7 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 		int gY = (tempY - StartY) / blockHeight;
 		if (gY < 0) gY = 0;
 		if (gY >= pGridY) gY = pGridY - 1;
-		putColor.dword = pixels[gX][gY];
+		putColor = pixels[gX][gY];
 	}
 
 	//put current color into array
@@ -368,7 +319,7 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 		int gY = (tempY - StartY) / blockHeight;
 		if (gY < 0) gY = 0;
 		if (gY >= pGridY) gY = pGridY - 1;
-		pixels[gX][gY] = putColor.dword;
+		pixels[gX][gY] = putColor;
 	}
 
 	//test print Mouse X and Y
@@ -397,22 +348,74 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 	}
 }
 
+void testDrawSprite(Graphics& gfx) {
+	Color c(150, 150, 150);
+	int fsize = 32 * 32;
+	Color* cBuf;
+	cBuf =(Color *) calloc(fsize, sizeof(Color));
+
+	
+	//std::ifstream file;
+	FILE* file;
+	//file.open("test.spr", std::ios::in | std::ios::binary);
+	file=fopen("test.spr", "rb");
+	if (file == nullptr) return; //fail if can't open file
+	fseek(file, 80, SEEK_SET);
+	fread((Color *)cBuf, sizeof(Color), 32 * 32,file);
+	
+	///getcount and output
+	
+	/*std::streampos begin, end;
+	begin = file.tellg();
+	file.seekg(0, std::ios::end);
+	end = file.tellg();
+	int fsize = (int)begin - (int)end; //fsize = 32 * 32 * 8 bytes! should be 32 * 32 * 4bytes!
+	*/
+	char sizeBuf[20];
+	_itoa_s(fsize, sizeBuf, 10);
+	font.PrintS(gfx, sizeBuf, 10, 400, c);
+	
+	//std::vector<char> vPix;
+	//vPix.reserve(fsize);
+	//char bufTemp[32 * 32 * 4];
+	//file.seekg(0, std::ios::beg);
+	//file.read(bufTemp, fsize);
+	
+	int xOff = 120;
+	int yOff = 300;
+	
+	/* std::vector<char> data{
+		std::istreambuf_iterator<char>{ std::ifstream("filename", std::ios::binary) },
+		std::istreambuf_iterator<char>{}
+	};*/ //investigate this
+	
+
+	for (int i = 0; i < (int)fsize; i+=4) {
+		
+		int y = i / 32;
+		int x = i-(y*32);
+		y = y + yOff;
+		x = x + xOff;
+		gfx.PutPixel(x, y, cBuf[i]);
+	} 
+	fclose(file);
+	free(cBuf);
+
+	//file.close();
+	//sprite.data
+}
+
 void Game::ComposeFrame()
 {
-	Color test;
-	FpsWindow(gfx);
-	test = DrawColorPicker(gfx,wnd);
-	font.PrintS(gfx, "spork", 200, 500, test);
-	DrawGrid(gfx,wnd,test);
 	
-	if (wnd.kbd.KeyIsPressed(VK_F5)) {
-		for (int x = 0; x < pixWsize; x++) {
-			for (int y = 0; y < pixHsize; y++) {
-				sprite.data.push_back(pixels[x][y]);
-			}
-		}
-		sprite.SaveSprite();
-	}
+	//FpsWindow(gfx,font);
+	//test = DrawColorPicker(gfx,wnd);
+	font.PrintS(gfx, "spork", 200, 500, test);
+	DrawFatRect(gfx, 300, 100, 400, 200, RainBorder);
+	//DrawGrid(gfx,wnd,test);
+
+	//testDrawSprite(gfx);
+	
 	
 }
 	

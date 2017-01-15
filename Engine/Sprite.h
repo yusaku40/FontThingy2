@@ -2,6 +2,9 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <stdio.h>
+#include"Colors.h"
+
 class Sprite {
 public:
 	Sprite();
@@ -12,11 +15,12 @@ public:
 
 	char filename[20] = { "test.spr" };
 	char name[15];
-	std::vector<int> data;
+	Color * data;
+	//std::vector<int> data;
 
 
 private:
-	int Xsize;
+	int XSize;
 	int YSize;
 
 };

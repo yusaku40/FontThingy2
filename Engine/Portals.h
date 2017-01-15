@@ -23,3 +23,23 @@ public:
 private:
 
 };
+
+class SimplePortal {
+public:
+	SimplePortal(Graphics gfx,  int x1, int y1, int x2, int y2,Color bColor);
+
+
+private:
+	int X1;
+	int Y1;
+	int X2;
+	int Y2;
+	int WidthIn;
+	int HeightIn;
+	int Left;
+	int Right;
+	int Top;
+	int Bot; //bottom
+	Color BorderColor;
+
+};
