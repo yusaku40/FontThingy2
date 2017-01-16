@@ -1,13 +1,17 @@
 #include "Portals.h"
+#include <new>
 
 
 
-
-SimplePortal::SimplePortal( int x1, int y1, int x2, int y2, Color bColor)
+SimplePortal::SimplePortal(char* Name, int x1, int y1, int x2, int y2, Color bColor,Color tColor)
 {
+	size_t len = strlen(Name);
+	name = new char[len + 1];
+	strcpy_s((char*)name,len + 1,Name);
 	
 	X1 = x1; Y1 = y1; X2 = x2; Y2 = y2; //copy in location
 	this->BorderColor = bColor; //remove if uneccessary
+	this->TitleColor = tColor; 
 	
 	///calculate internal size
 	WidthIn = X2 - X1 - 4; ///subtract border width
@@ -16,7 +20,7 @@ SimplePortal::SimplePortal( int x1, int y1, int x2, int y2, Color bColor)
 	///Set internal limits/offsets
 	Left = X1 + 2;
 	Right = X2 - 2;
-	Top = Y1 + 2;
+	Top = Y1 + 22;
 	Bot = Y2 - 2;
 
 	
@@ -24,7 +28,10 @@ SimplePortal::SimplePortal( int x1, int y1, int x2, int y2, Color bColor)
 }
 void SimplePortal::DrawBorder(Graphics& gfx) {
 	///draw border
-	DrawFatRect(gfx, X1, Y1, X2, Y2, BorderColor); ///draw window border in color bColor
+	gfx.DrawFRect(X1, Y1, X2 - X1 + 2, 20, BorderColor);//draw title bar
+	DrawFatRect(gfx, X1, Y1+20, X2, Y2, BorderColor); ///draw window border in color bColor
+	int tCenter = X1 + ((X2 - X1) / 2)- (strlen(name) / 2) * 10;
+	font.PrintS(gfx, name, tCenter, Y1 + 12, TitleColor);
 }
 
 bool SimplePortal::DrawPixel(Graphics & gfx, Vec2 loc, Color c)

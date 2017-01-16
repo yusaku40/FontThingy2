@@ -3,6 +3,7 @@
 #include "Colors.h"
 #include "Graphics.h"
 #include "Graphics2.h"
+#include "Font.h"
 
 class tPortals {
 public:
@@ -25,24 +26,27 @@ private:
 
 class SimplePortal {
 public:
-	SimplePortal( int x1, int y1, int x2, int y2,Color bColor);
+	SimplePortal(char* Name, int x1, int y1, int x2, int y2,Color bColor,Color tColor);
 	void DrawBorder(Graphics & gfx);
 	bool DrawPixel(Graphics& gfx, Vec2 loc, Color c);
 	bool DrawLine( Graphics& gfx,Vec2 loc1, Vec2 loc2, Color c);
 	bool MovePortal(Vec2 mov);
 
+	int WidthIn;
+	int HeightIn;
 	
 private:
+	char* name;
+	Font font;
 	int X1;
 	int Y1;
 	int X2;
 	int Y2;
-	int WidthIn;
-	int HeightIn;
 	int Left;
 	int Right;
 	int Top;
 	int Bot; //bottom
 	Color BorderColor;
+	Color TitleColor;
 
 };

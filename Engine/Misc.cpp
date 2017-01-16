@@ -1,6 +1,6 @@
 
 #include "Misc.h"
-#include "Portals.h"
+
 
 
 
@@ -8,39 +8,38 @@
 
 void pRain(Graphics& gfx,SimplePortal& rPortal) {
 	static int pOff1;
-	static int pOff2;
-	static int pOff3;
+	
+	static bool init;
+	static Vec2 FGR[100]; //create 20 Foreground rain droplets
 
-	Color c(255, 0, 255);
-	//fg rain
-	if (pOff1 < 300) {
-
-		int test = rand();
-		int test2 = rand() / 255;
-
-
-		gfx.DrawLine(10, 10 + pOff1, 10, 40 + pOff1, c);
-		gfx.DrawLine(50, 20 + pOff1, 50, 50 + pOff1, c);
-		gfx.DrawLine(70, 40 + pOff1, 70, 70 + pOff1, c);
-		gfx.DrawLine(200, 10 + pOff1, 200, 40 + pOff1, c);
-		pOff1 = pOff1 + 10;
+	static Color c(200, 0, 255);
+	///new FG Rain
+	//init//
+	if (!init) {
+		for (int i = 0; i < 100; i++) {
+			FGR[i].x = rand() % rPortal.WidthIn;
+			FGR[i].y = rand() % rPortal.HeightIn;
+			pOff1 = 0;
+			init = true;
+		}
 	}
 	else {
-		pOff1 = 0;
+		for (int i = 0; i < 100; i++) {
+			rPortal.DrawLine(gfx, { FGR[i].x,FGR[i].y + pOff1 }, { FGR[i].x, FGR[i].y + pOff1 + 10 }, c);
+			if (pOff1 < rPortal.HeightIn) pOff1 = pOff1 +2; //move rain down
+			if (pOff1 + 0 >= rPortal.HeightIn) {
+				pOff1 = 0;
+				FGR[i].x = rand() % rPortal.WidthIn;
+				FGR[i].y = 0;
+			}
+		}
+		
 	}
-	//mid rain
-	Color c2(200, 0, 200);
-	if (pOff2 < 300) {
-		gfx.DrawLine(20, 10 + pOff2, 20, 20 + pOff2, c2);
-		gfx.DrawLine(80, 10 + pOff2, 80, 20 + pOff2, c2);
-		gfx.DrawLine(90, 10 + pOff2, 90, 20 + pOff2, c2);
-		gfx.DrawLine(150, 10 + pOff2, 150, 20 + pOff2, c2);
-		pOff2 = pOff2 + 6;
-	}
-	else {
-		pOff2 = 0;
-	}
-
+	
+	
+	
+	
+	
 }
 
 void FpsWindow(Graphics& gfx,Font font) {

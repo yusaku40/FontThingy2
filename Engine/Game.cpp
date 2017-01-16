@@ -41,9 +41,11 @@ tRect txtRect({ 1,619 },1270 ,100);
 bool msgPrinted = false;
 
 Color test;
-Color RainBorder(180, 0, 210);
+Color RainBorder(0, 0, 150);
+Color testFont(100, 100, 100);
 
-SimplePortal portal(200, 200, 300, 300, RainBorder);
+SimplePortal portal("test",300, 200, 600, 500, RainBorder,testFont);
+SimplePortal p2("FoxCon", 700, 0, 900, 400, Color(123, 0, 50), Color(200, 200, 200));
 
 ////PixelEdit TempGlobals
 const int pixWsize = 32;
@@ -413,15 +415,15 @@ void testDrawSprite(Graphics& gfx) {
 void Game::ComposeFrame()
 {
 	portal.DrawBorder(gfx);
-	portal.DrawPixel(gfx, { 10, 10 }, RainBorder);
-	portal.DrawPixel(gfx, { 11, 10 }, RainBorder);
-	portal.DrawPixel(gfx, { 12, 10 }, RainBorder);
-	portal.DrawLine(gfx, { 10,10 }, { 30,30 }, RainBorder);
-	
-	
+	portal.DrawLine(gfx, { 20,20 }, { 100,60 }, RainBorder);
+	pRain(gfx, portal); // not working right right now
+
+	p2.DrawBorder(gfx);
+	p2.DrawLine(gfx, { 10,1 }, { 50, 50 }, Colors::White);
+	//pRain(gfx, p2);
 	//FpsWindow(gfx,font);
 	//test = DrawColorPicker(gfx,wnd);
-	font.PrintS(gfx, "spork", 200, 500, test);
+	//font.PrintS(gfx, "spork", 200, 500, test);
 	//DrawFatRect(gfx, 300, 100, 400, 200, RainBorder);
 	//DrawGrid(gfx,wnd,test);
 
