@@ -11,10 +11,15 @@ class Vec2 {
 public:
 	Vec2();
 	Vec2(int a, int b);
+	Vec2 operator=(const Vec2 a);
 	int x;
 	int y;
 	
 };
+
+Vec2 operator+(const Vec2 a, const Vec2 b);
+
+
 
 class tLine {
 public:

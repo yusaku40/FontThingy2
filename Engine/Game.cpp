@@ -28,6 +28,7 @@
 #include "Misc.h"
 #include "Graphics2.h"
 #include "Portals.h"
+#include <random>
 
 
 ///Globalsish////
@@ -41,17 +42,18 @@ tRect txtRect({ 1,619 },1270 ,100);
 bool msgPrinted = false;
 
 Color test;
-Color RainBorder(0, 0, 150);
-Color testFont(100, 100, 100);
+Color RainBorder(100, 100, 100);
+Color testFont(150, 150, 150);
 
 SimplePortal portal("test",300, 200, 600, 500, RainBorder,testFont);
-SimplePortal p2("FoxCon", 700, 0, 900, 400, Color(123, 0, 50), Color(200, 200, 200));
+SimplePortal p2("FoxCon", 1000, 0, 1100, 100, Color(123, 0, 50), Color(200, 200, 200));
 
 ////PixelEdit TempGlobals
 const int pixWsize = 32;
 const int pixHsize = 32;
 //unsigned int pixels[pixWsize][pixHsize];
 Color pixels[pixWsize][pixHsize];
+Color pixels2[pixWsize][pixHsize]; //loaded sprite
 static bool f5Pressed = false;
 
 
@@ -81,8 +83,6 @@ void Game::UpdateModel()
 
 
 
-
-
 void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	Color c(150, 150, 150);
 
@@ -108,7 +108,7 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	}
 	font.PrintRect(gfx, txtRect, c);
 
-	_itoa_s(txtRect.vText.size(), b2, 10);
+	_itoa_s((int)txtRect.vText.size(), b2, 10); //trying explicit cast
 	font.PrintS(gfx, b2, 500, 400, c);
 	if (wnd.mouse.LeftIsPressed() && !msgPrinted) {
 		txtRect.Push(" L Mouse button is pressed ");
@@ -122,13 +122,8 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	if (!f5Pressed) {
 		if (wnd.kbd.KeyIsPressed(VK_F5)) {
 			f5Pressed = true;
-			for (int y = 0; y < pixHsize - 1; y++)
-			{
-				for (int x = 0; x < pixWsize; x++) {
-					sprite.data[y * pixHsize + x] = pixels[x][y];
-				}
-			}
-			sprite.SaveSprite();
+			
+			sprite.SaveSprite(pixels);
 		}
 	}
 	if (wnd.kbd.KeyIsEmpty()) {
@@ -364,8 +359,9 @@ void testDrawSprite(Graphics& gfx) {
 	
 	//std::ifstream file;
 	FILE* file;
+	FILE** fileP = &file;
 	//file.open("test.spr", std::ios::in | std::ios::binary);
-	file=fopen("test.spr", "rb");
+	fopen_s(fileP,"test.spr", "rb");
 	if (file == nullptr) return; //fail if can't open file
 	fseek(file, 80, SEEK_SET);
 	fread((Color *)cBuf, sizeof(Color), 32 * 32,file);
@@ -412,20 +408,49 @@ void testDrawSprite(Graphics& gfx) {
 	//sprite.data
 }
 
+void testds(Graphics& gfx,SimplePortal& portal) { ///sweet seems to work
+	FILE* file = nullptr;
+
+	/*file=fopen("test1.spr", "wb");
+
+	for (int x = 0; x < pixWsize; x++) {
+		for (int y = 0; y < pixHsize; y++) {
+			pixels[x][y] = Color(rand()% 255, rand() % 255, rand() % 255);
+		}
+	}
+	fwrite(pixels, sizeof(pixels), 1, file);
+	fclose(file);
+	*/
+
+	file = fopen("test.spr", "rb");
+	fread(pixels2, sizeof(pixels2), 1, file);
+	for (int x = 0; x < pixWsize; x++) {
+		for (int y = 0; y < pixHsize; y++) {
+			portal.DrawPixel(gfx, { x,y },  pixels2[x][y]);
+		}
+	}
+	fclose(file);
+
+}
+
 void Game::ComposeFrame()
 {
-	portal.DrawBorder(gfx);
-	portal.DrawLine(gfx, { 20,20 }, { 100,60 }, RainBorder);
-	pRain(gfx, portal); // not working right right now
+	KeyInTemp(wnd, gfx);
+	
+	testds(gfx, p2);  //testing file access for sprite
+	
+	//pRain(gfx, portal); // not working right right now
 
 	p2.DrawBorder(gfx);
-	p2.DrawLine(gfx, { 10,1 }, { 50, 50 }, Colors::White);
-	//pRain(gfx, p2);
+	//p2.DrawLine(gfx, { 10,1 }, { 50, 50 }, Colors::White);
+	
+	
+	
 	//FpsWindow(gfx,font);
-	//test = DrawColorPicker(gfx,wnd);
-	//font.PrintS(gfx, "spork", 200, 500, test);
-	//DrawFatRect(gfx, 300, 100, 400, 200, RainBorder);
-	//DrawGrid(gfx,wnd,test);
+	test = DrawColorPicker(gfx,wnd);
+	font.PrintS(gfx, "spork", 200, 500, test);
+	
+	DrawGrid(gfx,wnd,test);
 
 	//testDrawSprite(gfx);
 	

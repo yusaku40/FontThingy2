@@ -14,6 +14,28 @@ Vec2::Vec2(int a, int b)
 	this->y = b;
 }
 
+Vec2 Vec2::operator=(const Vec2 a)
+{
+	this->x = a.x;
+	this->y = a.y;
+	return Vec2();
+}
+
+/*Vec2 Vec2::operator+(const Vec2 a)
+{
+	this->x += a.x;
+	this->y += a.y;
+
+	return Vec2();
+} */
+
+Vec2 operator+(const Vec2 a, const Vec2 b) ///not part of class so its not a "unary" operator
+{
+	return{ a.x + b.x,a.y + b.y };
+	//return Vec2();
+}
+
+
 void tLine::operator=(char* c)
 {
 	for (int i = 0; i < strlen(c); i++) {
@@ -56,3 +78,4 @@ void clamp(int & i, int min, int max)
 	if (i < min) i = min;
 	if (i > max)i = max;
 }
+
