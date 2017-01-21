@@ -25,13 +25,12 @@ Sprite Sprite::LoadSprite(const char * filename)
 	return Sprite();
 }
 
-bool Sprite::SaveSprite(const Color** buf)
+bool Sprite::SaveSprite(Color& buf)
 {
 	FILE* file;
 	file=fopen(filename, "wb");
 	if (file == nullptr) return false;
-	//fwrite(&data, sizeof(Color),XSize * YSize, file);
-	fwrite(&data, sizeof(buf), 1, file);
+	fwrite(buf, sizeof(buf), 1, file);
 	fclose(file);
 	return true;
 

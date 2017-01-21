@@ -11,7 +11,7 @@ public:
 	Sprite(int xsize, int ysize);
 	Sprite(int xsize, int ysize, const char* name);
 	Sprite LoadSprite(const char* filename);
-	bool SaveSprite(const Color** buf);
+	bool SaveSprite(Color& buf);
 
 	char filename[20] = { "test.spr" };
 	char name[15];

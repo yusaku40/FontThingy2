@@ -53,7 +53,7 @@ const int pixWsize = 32;
 const int pixHsize = 32;
 //unsigned int pixels[pixWsize][pixHsize];
 Color pixels[pixWsize][pixHsize];
-Color pixels2[pixWsize][pixHsize]; //loaded sprite
+Color pixels2[pixWsize * pixHsize]; //loaded sprite
 static bool f5Pressed = false;
 
 
@@ -119,18 +119,30 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 		msgPrinted = false;
 	}
 	///temp placement????
+	
+}
+void CheckForSave(MainWindow& wnd) {
 	if (!f5Pressed) {
 		if (wnd.kbd.KeyIsPressed(VK_F5)) {
 			f5Pressed = true;
-			
-			sprite.SaveSprite(pixels);
+			Color save[pixWsize * pixHsize];
+			for (int x = 0; x < pixWsize; x++)
+			{
+				for (int y = 0; y < pixHsize; y++)
+				{
+					save[y * pixWsize + x] = pixels[x][y];
+				}
+			}
+
+			sprite.SaveSprite(save);
+
+			//sprite.SaveSprite(&pixels[0][0]);
 		}
 	}
 	if (wnd.kbd.KeyIsEmpty()) {
 		f5Pressed = false;
 	}
 }
-
 Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 	int Xpos=20;
 	int Ypos=20;
@@ -300,7 +312,7 @@ void DrawGrid(Graphics& gfx,MainWindow& wnd,Color putColor) {
 		gfx.DrawLine(StartX, i * blockHeight + StartY,  StartX + TotalWidth, i * blockHeight + StartY, c);
 	}
 
-	
+	///putting color into pixels
 	if (wnd.mouse.LeftIsPressed()&& wnd.kbd.KeyIsPressed(VK_SPACE)) {
 		int tempX = wnd.mouse.GetPosX();
 		int tempY = wnd.mouse.GetPosY();
@@ -368,21 +380,11 @@ void testDrawSprite(Graphics& gfx) {
 	
 	///getcount and output
 	
-	/*std::streampos begin, end;
-	begin = file.tellg();
-	file.seekg(0, std::ios::end);
-	end = file.tellg();
-	int fsize = (int)begin - (int)end; //fsize = 32 * 32 * 8 bytes! should be 32 * 32 * 4bytes!
-	*/
+	
 	char sizeBuf[20];
 	_itoa_s(fsize, sizeBuf, 10);
 	font.PrintS(gfx, sizeBuf, 10, 400, c);
 	
-	//std::vector<char> vPix;
-	//vPix.reserve(fsize);
-	//char bufTemp[32 * 32 * 4];
-	//file.seekg(0, std::ios::beg);
-	//file.read(bufTemp, fsize);
 	
 	int xOff = 120;
 	int yOff = 300;
@@ -424,19 +426,29 @@ void testds(Graphics& gfx,SimplePortal& portal) { ///sweet seems to work
 
 	file = fopen("test.spr", "rb");
 	fread(pixels2, sizeof(pixels2), 1, file);
-	for (int x = 0; x < pixWsize; x++) {
-		for (int y = 0; y < pixHsize; y++) {
-			portal.DrawPixel(gfx, { x,y },  pixels2[x][y]);
+	for (int x = 0; x < pixWsize; x++)
+	{
+		for (int y = 0; y < pixHsize; y++)
+		{
+			portal.DrawPixel(gfx, { x , y},pixels2[y*pixWsize + x]);
 		}
 	}
+	
+	/*for (int x = 0; x < pixWsize; x++) {
+		for (int y = 0; y < pixHsize; y++) {
+			portal.DrawPixel(gfx, { x+10,y+10},  pixels2[x][y]);
+		}
+	}
+	*/
 	fclose(file);
 
 }
 
 void Game::ComposeFrame()
 {
-	KeyInTemp(wnd, gfx);
-	
+	//KeyInTemp(wnd, gfx);
+	CheckForSave(wnd);
+
 	testds(gfx, p2);  //testing file access for sprite
 	
 	//pRain(gfx, portal); // not working right right now
