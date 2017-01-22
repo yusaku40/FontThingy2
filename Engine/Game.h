@@ -24,6 +24,9 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
+//temp function prototypes
+void CheckForSave(MainWindow& wnd);
+
 class Game
 {
 public:

@@ -18,3 +18,12 @@ void DrawFatRect(Graphics & gfx, int x1, int y1,int x2,int y2, Color c)
 	gfx.DrawLine(x1, y2, x2, y2, c);
 	gfx.DrawLine(x1, y2-1, x2, y2-1, c);
 }
+
+
+void DrawSpriteS(Graphics & gfx, int x, int y)
+{
+}
+
+void DrawSpriteS(Graphics & gfx, Vec2 pos)
+{
+}

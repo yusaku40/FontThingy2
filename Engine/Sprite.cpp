@@ -25,20 +25,15 @@ Sprite Sprite::LoadSprite(const char * filename)
 	return Sprite();
 }
 
-bool Sprite::SaveSprite(Color& buf)
+bool Sprite::SaveSprite(Color buf[], size_t size)
 {
 	FILE* file;
 	file=fopen(filename, "wb");
 	if (file == nullptr) return false;
-	fwrite(buf, sizeof(buf), 1, file);
+	fwrite(buf, size, 1, file);
+	
 	fclose(file);
 	return true;
 
-	
-	/*std::ofstream file;
-	file.open(filename, std::ios::out |std::ios::binary);
-	file.seekp(0, std::ios::beg);
-	file.write((char*)data.data(), data.size());
-	file.close();
-	return true;*/
+
 }

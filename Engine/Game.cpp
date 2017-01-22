@@ -78,6 +78,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	CheckForSave(wnd);
 	
 }
 
@@ -121,11 +122,11 @@ void KeyInTemp(MainWindow& wnd, Graphics& gfx) {
 	///temp placement????
 	
 }
+
 void CheckForSave(MainWindow& wnd) {
-	if (!f5Pressed) {
 		if (wnd.kbd.KeyIsPressed(VK_F5)) {
 			f5Pressed = true;
-			Color save[pixWsize * pixHsize];
+			static Color save[pixWsize * pixHsize];
 			for (int x = 0; x < pixWsize; x++)
 			{
 				for (int y = 0; y < pixHsize; y++)
@@ -134,15 +135,12 @@ void CheckForSave(MainWindow& wnd) {
 				}
 			}
 
-			sprite.SaveSprite(save);
+			sprite.SaveSprite(save, (sizeof(Color)* pixWsize * pixHsize));
 
-			//sprite.SaveSprite(&pixels[0][0]);
 		}
 	}
-	if (wnd.kbd.KeyIsEmpty()) {
-		f5Pressed = false;
-	}
-}
+	
+
 Color DrawColorPicker(Graphics& gfx,MainWindow& wnd) {
 	int Xpos=20;
 	int Ypos=20;
@@ -413,18 +411,8 @@ void testDrawSprite(Graphics& gfx) {
 void testds(Graphics& gfx,SimplePortal& portal) { ///sweet seems to work
 	FILE* file = nullptr;
 
-	/*file=fopen("test1.spr", "wb");
-
-	for (int x = 0; x < pixWsize; x++) {
-		for (int y = 0; y < pixHsize; y++) {
-			pixels[x][y] = Color(rand()% 255, rand() % 255, rand() % 255);
-		}
-	}
-	fwrite(pixels, sizeof(pixels), 1, file);
-	fclose(file);
-	*/
-
 	file = fopen("test.spr", "rb");
+	if (file == nullptr) return;
 	fread(pixels2, sizeof(pixels2), 1, file);
 	for (int x = 0; x < pixWsize; x++)
 	{
@@ -434,24 +422,15 @@ void testds(Graphics& gfx,SimplePortal& portal) { ///sweet seems to work
 		}
 	}
 	
-	/*for (int x = 0; x < pixWsize; x++) {
-		for (int y = 0; y < pixHsize; y++) {
-			portal.DrawPixel(gfx, { x+10,y+10},  pixels2[x][y]);
-		}
-	}
-	*/
+	
 	fclose(file);
 
 }
 
 void Game::ComposeFrame()
 {
-	//KeyInTemp(wnd, gfx);
-	CheckForSave(wnd);
-
 	testds(gfx, p2);  //testing file access for sprite
 	
-	//pRain(gfx, portal); // not working right right now
 
 	p2.DrawBorder(gfx);
 	//p2.DrawLine(gfx, { 10,1 }, { 50, 50 }, Colors::White);
